@@ -38,7 +38,7 @@
   }
 
   // ─── INYECTAR CSS DE PLYR ─────────────────────────────────────────────────────
-  if (!document.querySelector(`link[href="${PLYR_CSS}"]`)) {
+  if (!document.querySelector('link[href="' + PLYR_CSS + '"]')) {
     const link = document.createElement('link');
     link.rel  = 'stylesheet';
     link.href = PLYR_CSS;
@@ -49,12 +49,12 @@
   const uid = 'bsp-' + Math.random().toString(36).substr(2, 8);
   const wrapper = document.createElement('div');
   wrapper.style.cssText = 'max-width:100%;margin:0 auto 30px auto;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.6);';
-  wrapper.innerHTML = `<video id="${uid}" class="plyr__video" playsinline controls crossorigin style="width:100%;height:auto;display:block;"></video>`;
+  wrapper.innerHTML = '<video id="' + uid + '" class="plyr__video" playsinline controls crossorigin style="width:100%;height:auto;display:block;"></video>';
   scriptTag.parentNode.insertBefore(wrapper, scriptTag);
 
   // ─── CARGAR LIBRERÍAS Y ARRANCAR ─────────────────────────────────────────────
   function cargarScript(url, callback) {
-    if (document.querySelector(`script[src="${url}"]`)) { callback(); return; }
+    if (document.querySelector('script[src="' + url + '"]')) { callback(); return; }
     const s = document.createElement('script');
     s.src = url;
     s.onload = callback;
@@ -89,7 +89,9 @@
         hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          const calidades = [0, ...hls.levels.map(l => l.height).filter(h => h)];
+          const calidades = [0].concat(hls.levels.map(function (l) { return l.height; }).filter(function (h) { return h; }));
+          const etiquetas = { 0: 'Auto' };
+          hls.levels.forEach(function (l) { if (l.height) etiquetas[l.height] = l.height + 'p'; });
           opciones.quality = {
             default: 0,
             options: calidades,
@@ -97,13 +99,13 @@
             onChange: function (q) {
               if (q === 0) hls.currentLevel = -1;
               else {
-                const idx = hls.levels.findIndex(l => l.height === q);
+                const idx = hls.levels.findIndex(function (l) { return l.height === q; });
                 if (idx !== -1) hls.currentLevel = idx;
               }
             }
           };
           if (plyrInstance) { plyrInstance.destroy(); }
-          plyrInstance = new Plyr(video, opciones);
+          plyrInstance = new Plyr(video, Object.assign({}, opciones, { i18n: { qualityLabel: etiquetas } }));
         });
 
         hls.on(Hls.Events.ERROR, function (event, data) {
