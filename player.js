@@ -84,7 +84,11 @@
 
     function iniciarReproductor() {
       if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-        const hls = new Hls({ requestTimeout: 8000, retryDelay: 2000 });
+        const hls = new Hls({ 
+          requestTimeout: 8000, 
+          retryDelay: 2000,
+          capLevelToPlayerSize: true // Limita la calidad (1080p, 720p...) según el tamaño del marco en pantalla
+        });
         hls.loadSource(source);
         hls.attachMedia(video);
 
