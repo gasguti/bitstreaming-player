@@ -1,5 +1,5 @@
 /*!
- * Bitstreaming Player v1.0
+ * Bitstreaming Player v1.1 Mas buffer 
  * Reproductor HLS centralizado - https://bitstreaming.net
  * Actualizar este archivo en GitHub propaga cambios a todos los clientes.
  */
@@ -87,7 +87,12 @@
         const hls = new Hls({ 
           requestTimeout: 8000, 
           retryDelay: 2000,
-          capLevelToPlayerSize: true // Limita la calidad (1080p, 720p...) según el tamaño del marco en pantalla
+          capLevelToPlayerSize: true, // Limita la calidad (1080p, 720p...) según el tamaño del marco en pantalla
+          maxBufferLength: 20,
+          maxMaxBufferLength: 40,
+          liveSyncDurationCount: 4,
+          startFragPrefetch: true,
+          enableWorker: true
         });
         hls.loadSource(source);
         hls.attachMedia(video);
