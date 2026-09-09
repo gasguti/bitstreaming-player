@@ -9,7 +9,9 @@
 
   const PLYR_CSS = 'https://cdn.plyr.io/3.7.8/plyr.css';
   const PLYR_JS  = 'https://cdn.plyr.io/3.7.8/plyr.js';
-  const HLS_JS   = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+  // Versión FIJA (no @latest): evita que un release futuro de hls.js cambie
+  // el comportamiento del player en todos los clientes sin aviso.
+  const HLS_JS   = 'https://cdn.jsdelivr.net/npm/hls.js@1.7.2';
 
   // ─── OBTENER PARÁMETRO src DE LA URL DEL SCRIPT ──────────────────────────────
   const scriptTag = document.currentScript;
@@ -49,7 +51,9 @@
   const uid = 'bsp-' + Math.random().toString(36).substr(2, 8);
   const wrapper = document.createElement('div');
   wrapper.className = 'bsp-wrapper';
-  wrapper.style.cssText = 'position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.6);margin:0 auto 30px auto;';
+  // min-width:280px evita que el player colapse si la web del cliente lo mete en un
+  // contenedor muy chico (caso real: contenedor de 64px = recuadro negro en móvil).
+  wrapper.style.cssText = 'position:relative;width:100%;min-width:280px;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.6);margin:0 auto 30px auto;';
 
   if (!document.getElementById('bsp-plyr-fix')) {
     const sf = document.createElement('style');
